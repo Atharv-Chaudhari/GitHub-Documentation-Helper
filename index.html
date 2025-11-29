@@ -1,0 +1,672 @@
+ <!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KnowledgeBase - Professional Documentation Platform</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+<body data-mode="home">
+    <!-- Particles Background -->
+    <div id="particles-js"></div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Loading KnowledgeBase...</p>
+        </div>
+    </div>
+<body data-mode="home">
+    <!-- Top Navigation Bar -->
+    <nav class="top-nav">
+        <div class="nav-left">
+            <div class="logo">
+                <i class="fas fa-layer-group"></i>
+                <span>KnowledgeBase</span>
+            </div>
+            <div class="nav-modes">
+                <button class="nav-mode-btn active" data-mode="home">
+                    <i class="fas fa-home"></i> Home
+                </button>
+                <button class="nav-mode-btn" data-mode="edit">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+                <button class="nav-mode-btn" data-mode="view">
+                    <i class="fas fa-book-open"></i> View
+                </button>
+            </div>
+        </div>
+        <div class="nav-right">
+            <div class="search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" id="globalSearch" placeholder="Search everywhere...">
+            </div>
+            <button id="themeToggle" class="icon-btn" title="Toggle Theme">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button id="settingsBtn" class="icon-btn" title="Settings">
+                <i class="fas fa-cog"></i>
+            </button>
+            <button id="githubBtn" class="icon-btn github-btn" title="GitHub Integration">
+                <i class="fab fa-github"></i>
+                <span class="badge" id="githubStatus">●</span>
+            </button>
+            <div class="user-avatar" title="User Profile">
+                <i class="fas fa-user-circle"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HOME MODE -->
+    <div id="homeView" class="view-container active">
+        <div class="home-hero animate__animated animate__fadeIn">
+            <div class="hero-badge">
+                <i class="fas fa-star"></i> Professional Knowledge Management
+            </div>
+            <h1 class="gradient-text">Welcome to Your Knowledge Base</h1>
+            <p>Organize, document, and execute your ideas with AI-powered features</p>
+            <div class="hero-stats">
+                <div class="stat-pill">
+                    <i class="fas fa-rocket"></i> Fast & Powerful
+                </div>
+                <div class="stat-pill">
+                    <i class="fas fa-shield-alt"></i> Secure & Private
+                </div>
+                <div class="stat-pill">
+                    <i class="fab fa-python"></i> Python Enabled
+                </div>
+            </div>
+        </div>
+
+        <div class="home-actions animate__animated animate__fadeInUp">
+            <div class="action-card glass-effect" id="createDocCard">
+                <div class="action-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h3>Create Document</h3>
+                <p>Write new documentation with rich formatting</p>
+                <div class="card-hover-effect"></div>
+            </div>
+
+            <div class="action-card glass-effect" id="createFolderCard">
+                <div class="action-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <i class="fas fa-folder-plus"></i>
+                </div>
+                <h3>Create Folder</h3>
+                <p>Organize documents into folders</p>
+                <div class="card-hover-effect"></div>
+            </div>
+
+            <div class="action-card glass-effect" id="viewDocsCard">
+                <div class="action-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <h3>View Documentation</h3>
+                <p>Browse and read your documents</p>
+                <div class="card-hover-effect"></div>
+            </div>
+
+            <div class="action-card glass-effect" id="importDataCard">
+                <div class="action-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                    <i class="fas fa-upload"></i>
+                </div>
+                <h3>Import/Export</h3>
+                <p>Backup and restore your knowledge base</p>
+                <div class="card-hover-effect"></div>
+            </div>
+
+            <div class="action-card glass-effect" id="githubSyncCard">
+                <div class="action-icon" style="background: linear-gradient(135deg, #24292e 0%, #4078c0 100%);">
+                    <i class="fab fa-github"></i>
+                </div>
+                <h3>GitHub Sync</h3>
+                <p>Auto-commit changes to your repository</p>
+                <div class="card-hover-effect"></div>
+            </div>
+
+            <div class="action-card glass-effect" id="aiAssistCard">
+                <div class="action-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                    <i class="fas fa-magic"></i>
+                </div>
+                <h3>AI Assistant</h3>
+                <p>Smart suggestions and auto-formatting</p>
+                <div class="card-hover-effect"></div>
+            </div>
+        </div>
+
+        <div class="recent-section">
+            <h2><i class="fas fa-clock"></i> Recent Documents</h2>
+            <div id="recentDocs" class="recent-docs"></div>
+        </div>
+
+        <div class="stats-section">
+            <div class="stat-card stat-card-animated">
+                <i class="fas fa-file-alt"></i>
+                <div>
+                    <h3 id="totalDocs">0</h3>
+                    <p>Documents</p>
+                </div>
+                <div class="stat-sparkline"></div>
+            </div>
+            <div class="stat-card stat-card-animated">
+                <i class="fas fa-folder"></i>
+                <div>
+                    <h3 id="totalFolders">0</h3>
+                    <p>Folders</p>
+                </div>
+                <div class="stat-sparkline"></div>
+            </div>
+            <div class="stat-card stat-card-animated">
+                <i class="fas fa-code"></i>
+                <div>
+                    <h3 id="totalCode">0</h3>
+                    <p>Code Snippets</p>
+                </div>
+                <div class="stat-sparkline"></div>
+            </div>
+            <div class="stat-card stat-card-animated">
+                <i class="fab fa-github"></i>
+                <div>
+                    <h3 id="totalCommits">0</h3>
+                    <p>GitHub Commits</p>
+                </div>
+                <div class="stat-sparkline"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT MODE -->
+    <div id="editView" class="view-container">
+        <div class="split-layout">
+            <!-- Folder Tree Sidebar -->
+            <aside class="folder-sidebar">
+                <div class="sidebar-header">
+                    <h3><i class="fas fa-sitemap"></i> Structure</h3>
+                    <div class="sidebar-actions">
+                        <button class="icon-btn" id="newFolderBtn" title="New Folder">
+                            <i class="fas fa-folder-plus"></i>
+                        </button>
+                        <button class="icon-btn" id="newDocInTreeBtn" title="New Document">
+                            <i class="fas fa-file-plus"></i>
+                        </button>
+                        <button class="icon-btn" id="collapseAllBtn" title="Collapse All">
+                            <i class="fas fa-compress-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="tree-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="treeSearch" placeholder="Filter...">
+                </div>
+                <div id="folderTree" class="folder-tree"></div>
+            </aside>
+
+            <!-- Editor Area -->
+            <main class="editor-area">
+                <div class="breadcrumb">
+                    <span id="breadcrumbPath"></span>
+                </div>
+
+                <div class="editor-header">
+                    <input type="text" id="docTitle" class="doc-title-input" placeholder="Document Title">
+                    <div class="editor-meta">
+                        <select id="docCategory" class="category-select">
+                            <option value="general">📄 General</option>
+                            <option value="code">💻 Code</option>
+                            <option value="architecture">🏗️ Architecture</option>
+                            <option value="api">🔌 API</option>
+                            <option value="tutorial">🎓 Tutorial</option>
+                            <option value="notes">📝 Notes</option>
+                            <option value="python">🐍 Python</option>
+                        </select>
+                        <div class="editor-actions">
+                            <button id="saveDocBtn" class="btn btn-success">
+                                <i class="fas fa-save"></i> Save
+                            </button>
+                            <button id="deleteDocBtn" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="toolbar">
+                    <div class="toolbar-group">
+                        <button class="tool-btn" data-action="bold" title="Bold (Ctrl+B)">
+                            <i class="fas fa-bold"></i>
+                        </button>
+                        <button class="tool-btn" data-action="italic" title="Italic (Ctrl+I)">
+                            <i class="fas fa-italic"></i>
+                        </button>
+                        <button class="tool-btn" data-action="strikethrough" title="Strikethrough">
+                            <i class="fas fa-strikethrough"></i>
+                        </button>
+                    </div>
+                    <div class="toolbar-group">
+                        <button class="tool-btn" data-action="h1" title="Heading 1">
+                            <i class="fas fa-heading"></i>1
+                        </button>
+                        <button class="tool-btn" data-action="h2" title="Heading 2">
+                            <i class="fas fa-heading"></i>2
+                        </button>
+                        <button class="tool-btn" data-action="h3" title="Heading 3">
+                            <i class="fas fa-heading"></i>3
+                        </button>
+                    </div>
+                    <div class="toolbar-group">
+                        <button class="tool-btn" data-action="ul" title="Bullet List">
+                            <i class="fas fa-list-ul"></i>
+                        </button>
+                        <button class="tool-btn" data-action="ol" title="Numbered List">
+                            <i class="fas fa-list-ol"></i>
+                        </button>
+                        <button class="tool-btn" data-action="checklist" title="Checklist">
+                            <i class="fas fa-tasks"></i>
+                        </button>
+                    </div>
+                    <div class="toolbar-group">
+                        <button class="tool-btn" data-action="code" title="Inline Code">
+                            <i class="fas fa-code"></i>
+                        </button>
+                        <button class="tool-btn" data-action="codeblock" title="Code Block">
+                            <i class="fas fa-file-code"></i>
+                        </button>
+                        <button class="tool-btn" data-action="python" title="Python Code">
+                            <i class="fab fa-python"></i>
+                        </button>
+                    </div>
+                    <div class="toolbar-group">
+                        <button class="tool-btn" data-action="link" title="Link">
+                            <i class="fas fa-link"></i>
+                        </button>
+                        <button class="tool-btn" data-action="image" title="Image">
+                            <i class="fas fa-image"></i>
+                        </button>
+                        <button class="tool-btn" data-action="table" title="Table">
+                            <i class="fas fa-table"></i>
+                        </button>
+                    </div>
+                    <div class="toolbar-group">
+                        <button class="tool-btn" data-action="quote" title="Quote">
+                            <i class="fas fa-quote-right"></i>
+                        </button>
+                        <button class="tool-btn" data-action="divider" title="Divider">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="editor-workspace">
+                    <div class="editor-pane">
+                        <textarea id="markdownEditor" placeholder="Start writing your documentation...
+
+# Quick Guide
+Use Markdown syntax for formatting:
+
+**Bold** *Italic* ~~Strikethrough~~
+`inline code`
+
+## Python Code Execution
+```python:run
+# This code can be executed!
+print('Hello World')
+result = 2 + 2
+print(f'Result: {result}')
+```
+
+[Link](url) ![Image](url)
+- List item
+1. Numbered item
+> Quote
+"></textarea>
+                    </div>
+                    <div class="preview-pane">
+                        <div class="preview-header">
+                            <h4><i class="fas fa-eye"></i> Live Preview</h4>
+                            <button id="togglePreview" class="icon-btn">
+                                <i class="fas fa-expand"></i>
+                            </button>
+                        </div>
+                        <div id="livePreview" class="preview-content"></div>
+                    </div>
+                </div>
+
+                <!-- Python Execution Panel -->
+                <div id="pythonPanel" class="python-panel">
+                    <div class="panel-header">
+                        <h4><i class="fab fa-python"></i> Python Console</h4>
+                        <div class="panel-actions">
+                            <button id="runPythonBtn" class="btn btn-success btn-sm">
+                                <i class="fas fa-play"></i> Run
+                            </button>
+                            <button id="clearOutputBtn" class="btn btn-secondary btn-sm">
+                                <i class="fas fa-eraser"></i> Clear
+                            </button>
+                            <button id="closePythonBtn" class="icon-btn">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="panel-content">
+                        <div class="python-output" id="pythonOutput">
+                            <div class="output-info">
+                                <i class="fas fa-info-circle"></i> Python execution ready. Click Run or use Ctrl+Enter.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- VIEW MODE -->
+    <div id="viewView" class="view-container">
+        <div class="view-layout">
+            <!-- Navigation Sidebar -->
+            <aside class="view-sidebar">
+                <div class="sidebar-header">
+                    <h3><i class="fas fa-book"></i> Documentation</h3>
+                </div>
+                <div class="view-tree-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="viewTreeSearch" placeholder="Search docs...">
+                </div>
+                <div id="viewFolderTree" class="view-folder-tree"></div>
+            </aside>
+
+            <!-- Document Viewer -->
+            <main class="document-viewer">
+                <div class="doc-header">
+                    <div class="doc-breadcrumb" id="viewBreadcrumb"></div>
+                    <div class="doc-actions">
+                        <button id="editCurrentBtn" class="btn btn-primary btn-sm">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button id="exportPdfBtn" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-file-pdf"></i> Export
+                        </button>
+                        <button id="shareBtn" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-share-alt"></i> Share
+                        </button>
+                    </div>
+                </div>
+
+                <article id="documentContent" class="document-content">
+                    <div class="welcome-message">
+                        <i class="fas fa-book-reader"></i>
+                        <h2>Select a document to view</h2>
+                        <p>Choose a document from the sidebar to start reading</p>
+                    </div>
+                </article>
+
+                <div class="doc-footer" id="docFooter" style="display: none;">
+                    <div class="doc-meta">
+                        <span id="docAuthor"></span>
+                        <span id="docDate"></span>
+                        <span id="docReadTime"></span>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Create Folder Modal -->
+    <div id="folderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-folder-plus"></i> Create New Folder</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <label>Folder Name</label>
+                <input type="text" id="folderNameInput" placeholder="e.g., Artificial Intelligence">
+                <label>Parent Folder</label>
+                <select id="parentFolderSelect">
+                    <option value="">Root (No Parent)</option>
+                </select>
+                <label>Icon (optional)</label>
+                <div class="icon-picker">
+                    <button class="icon-option" data-icon="folder">📁</button>
+                    <button class="icon-option" data-icon="brain">🧠</button>
+                    <button class="icon-option" data-icon="code">💻</button>
+                    <button class="icon-option" data-icon="book">📚</button>
+                    <button class="icon-option" data-icon="rocket">🚀</button>
+                    <button class="icon-option" data-icon="star">⭐</button>
+                </div>
+                <input type="hidden" id="selectedIcon" value="📁">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelFolderBtn">Cancel</button>
+                <button class="btn btn-primary" id="createFolderBtn">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import/Export Modal -->
+    <div id="importExportModal" class="modal">
+        <div class="modal-content glass-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-exchange-alt"></i> Import / Export</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="import-export-options">
+                    <div class="option-card">
+                        <i class="fas fa-download"></i>
+                        <h4>Export All Data</h4>
+                        <p>Download your entire knowledge base as JSON</p>
+                        <button class="btn btn-primary" id="exportAllBtn">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                    <div class="option-card">
+                        <i class="fas fa-upload"></i>
+                        <h4>Import Data</h4>
+                        <p>Restore from a previously exported file</p>
+                        <button class="btn btn-primary" id="importFileBtn">
+                            <i class="fas fa-upload"></i> Import
+                        </button>
+                        <input type="file" id="importFileInput" accept=".json" style="display: none;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GitHub Settings Modal -->
+    <div id="githubModal" class="modal">
+        <div class="modal-content glass-modal">
+            <div class="modal-header">
+                <h3><i class="fab fa-github"></i> GitHub Integration</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="github-status-banner" id="githubStatusBanner">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Not connected to GitHub</span>
+                </div>
+
+                <label>Personal Access Token <span style="color: #10b981;">(Optional for public repos)</span></label>
+                <div class="input-group">
+                    <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxx (leave empty for public repos)">
+                    <button class="btn btn-secondary" id="toggleTokenBtn">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <small>
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Token NOT required for public repositories!</strong><br>
+                    Only needed for private repos. Create at: github.com/settings/tokens (needs 'repo' scope)
+                </small>
+
+                <label>Repository Owner</label>
+                <input type="text" id="githubOwner" placeholder="Atharv-Chaudhari" value="Atharv-Chaudhari" readonly>
+
+                <label>Repository Name</label>
+                <input type="text" id="githubRepo" placeholder="Artificial-Intelligence" value="Artificial-Intelligence" readonly>
+
+                <label>Branch</label>
+                <input type="text" id="githubBranch" placeholder="main" value="main">
+
+                <label>Commit Message Template</label>
+                <input type="text" id="githubCommitTemplate" placeholder="docs: update {title}" value="docs: update {title}">
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="autoCommit">
+                    <label for="autoCommit">Auto-commit on save</label>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="commitFolderStructure">
+                    <label for="commitFolderStructure">Sync folder structure</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="testGithubConnection">
+                    <i class="fas fa-plug"></i> Test Connection
+                </button>
+                <button class="btn btn-primary" id="saveGithubSettings">
+                    <i class="fas fa-save"></i> Save Settings
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content glass-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-cog"></i> Settings</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-section">
+                    <h4><i class="fas fa-palette"></i> Appearance</h4>
+                    <div class="setting-item">
+                        <label>Theme</label>
+                        <select id="settingTheme">
+                            <option value="light">Light</option>
+                            <option value="dark">Dark</option>
+                            <option value="auto">Auto</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <label>Accent Color</label>
+                        <div class="color-picker">
+                            <button class="color-option" data-color="#0066FF" style="background: #0066FF;"></button>
+                            <button class="color-option" data-color="#6554C0" style="background: #6554C0;"></button>
+                            <button class="color-option" data-color="#36B37E" style="background: #36B37E;"></button>
+                            <button class="color-option" data-color="#FF5630" style="background: #FF5630;"></button>
+                            <button class="color-option" data-color="#FFAB00" style="background: #FFAB00;"></button>
+                        </div>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="enableParticles" checked>
+                        <label for="enableParticles">Enable particle effects</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="enableAnimations" checked>
+                        <label for="enableAnimations">Enable animations</label>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h4><i class="fas fa-keyboard"></i> Editor</h4>
+                    <div class="setting-item">
+                        <label>Font Size</label>
+                        <select id="editorFontSize">
+                            <option value="12">12px</option>
+                            <option value="13">13px</option>
+                            <option value="14" selected>14px</option>
+                            <option value="16">16px</option>
+                            <option value="18">18px</option>
+                        </select>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="autoSave" checked>
+                        <label for="autoSave">Auto-save (every 30s)</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="livePreview" checked>
+                        <label for="livePreview">Live preview</label>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h4><i class="fab fa-python"></i> Python</h4>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="pythonAutoLoad">
+                        <label for="pythonAutoLoad">Preload Python environment</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="resetSettings">
+                    <i class="fas fa-undo"></i> Reset to Defaults
+                </button>
+                <button class="btn btn-primary" id="saveSettings">
+                    <i class="fas fa-save"></i> Save Settings
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Assistant Modal -->
+    <div id="aiModal" class="modal">
+        <div class="modal-content glass-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-magic"></i> AI Assistant</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="ai-feature">
+                    <i class="fas fa-lightbulb"></i>
+                    <div>
+                        <h4>Smart Suggestions</h4>
+                        <p>Get intelligent content recommendations while writing</p>
+                    </div>
+                </div>
+                <div class="ai-feature">
+                    <i class="fas fa-spell-check"></i>
+                    <div>
+                        <h4>Auto-Format</h4>
+                        <p>Automatically format code and markdown</p>
+                    </div>
+                </div>
+                <div class="ai-feature">
+                    <i class="fas fa-language"></i>
+                    <div>
+                        <h4>Grammar Check</h4>
+                        <p>Improve your writing with AI-powered suggestions</p>
+                    </div>
+                </div>
+                <div class="ai-coming-soon">
+                    <i class="fas fa-rocket"></i>
+                    <h4>Coming Soon!</h4>
+                    <p>AI features will be available in the next update</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="imageUploadInput" accept="image/*" style="display: none;">
+
+    <!-- Toast Notifications Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/11.1.1/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

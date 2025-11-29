@@ -1,0 +1,72 @@
+# save-document.yml
+name: Save Document via Issue
+
+# Triggered when user creates an issue with specific label
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  save-document:
+    # Only run if issue has the special label
+    if: contains(github.event.issue.labels.*.name, 'kb-save-doc')
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      issues: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Parse issue body
+        id: parse
+        run: |
+          # Extract filename from issue title
+          FILENAME=$(echo "${{ github.event.issue.title }}" | sed 's/\[KB-SAVE\] //' | tr ' ' '_' | tr '[:upper:]' '[:lower:]')
+          echo "filename=$FILENAME" >> $GITHUB_OUTPUT
+
+          # Issue body contains the document content
+          echo "${{ github.event.issue.body }}" > content.tmp
+
+      - name: Create docs directory
+        run: mkdir -p docs
+
+      - name: Save document
+        run: |
+          mv content.tmp "docs/${{ steps.parse.outputs.filename }}.md"
+
+      - name: Commit changes
+        run: |
+          git config user.name "KnowledgeBase Bot"
+          git config user.email "knowledgebase-bot@github.com"
+          git add docs/
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "📝 Save document: ${{ steps.parse.outputs.filename }}"
+            git push origin main
+            echo "✅ Document saved successfully"
+          fi
+
+      - name: Close and comment on issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: '✅ Document saved successfully!\n\nView at: https://github.com/${{ github.repository }}/blob/main/docs/${{ steps.parse.outputs.filename }}.md'
+            });
+
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              state: 'closed'
+            });

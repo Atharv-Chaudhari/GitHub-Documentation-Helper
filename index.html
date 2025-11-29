@@ -1567,7 +1567,7 @@ body {
 
     </style>
     <script>
-        //  app.js
+       //  app.js
 // KnowledgeBase - Professional Documentation Platform
 // Main Application Logic
 
@@ -1843,6 +1843,11 @@ class KnowledgeBase {
             }
         });
 
+        // Manual GitHub Sync Button
+        document.getElementById('githubSyncBtn')?.addEventListener('click', () => {
+            this.manualGitHubSync();
+        });
+
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             if (e.ctrlKey || e.metaKey) {
@@ -2015,12 +2020,20 @@ class KnowledgeBase {
         this.renderFolderTree();
         this.showNotification('Document saved successfully', 'success');
 
+        // Debug: Check if GitHub auto-commit conditions are met
+        console.log('GitHub Auto-Commit Check:', {
+            autoCommit: this.githubConfig.autoCommit,
+            hasToken: !!this.githubConfig.token,
+            docTitle: doc.title
+        });
+
         // Auto-commit to GitHub if enabled
-        if (this.githubConfig.autoCommit && this.githubConfig.token) {
+        if (this.githubConfig.autoCommit) {
+            console.log('Attempting GitHub commit...');
             this.commitToGitHub(
                 doc.title.replace(/[^a-z0-9]/gi, '_').toLowerCase(),
                 doc.content,
-                this.githubConfig.commitTemplate
+                this.githubConfig.commitTemplate.replace('{filename}', doc.title)
             );
         }
     }
@@ -2837,23 +2850,31 @@ class KnowledgeBase {
         }
 
         try {
-            // METHOD 1: Create GitHub Issue (NO TOKEN NEEDED if repo is public!)
-            // This triggers the save-document.yml workflow
             const issueTitle = `[KB-SAVE] ${filename}`;
             const issueBody = content;
+
+            console.log('GitHub API Request:', {
+                owner: this.githubConfig.owner,
+                repo: this.githubConfig.repo,
+                token: this.githubConfig.token ? '***' : 'none',
+                title: issueTitle
+            });
+
+            const headers = {
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
+            };
+
+            // Add authorization header only if token is provided
+            if (this.githubConfig.token) {
+                headers['Authorization'] = `token ${this.githubConfig.token}`;
+            }
 
             const response = await fetch(
                 `https://api.github.com/repos/${this.githubConfig.owner}/${this.githubConfig.repo}/issues`,
                 {
                     method: 'POST',
-                    headers: {
-                        'Accept': 'application/vnd.github.v3+json',
-                        'Content-Type': 'application/json',
-                        // Token only needed for private repos or to associate with user
-                        ...(this.githubConfig.token && {
-                            'Authorization': `token ${this.githubConfig.token}`
-                        })
-                    },
+                    headers: headers,
                     body: JSON.stringify({
                         title: issueTitle,
                         body: issueBody,
@@ -2861,6 +2882,12 @@ class KnowledgeBase {
                     })
                 }
             );
+
+            console.log('GitHub API Response:', {
+                status: response.status,
+                statusText: response.statusText,
+                ok: response.ok
+            });
 
             if (response.ok) {
                 const issue = await response.json();
@@ -2870,7 +2897,7 @@ class KnowledgeBase {
                 const commits = JSON.parse(localStorage.getItem('kb_github_commits') || '[]');
                 commits.unshift({
                     filename,
-                    message: message.replace('{filename}', filename),
+                    message: message,
                     timestamp: new Date().toISOString(),
                     status: 'queued',
                     issueNumber: issue.number
@@ -2879,11 +2906,46 @@ class KnowledgeBase {
 
             } else {
                 const errorText = await response.text();
-                this.showNotification('GitHub save failed: ' + errorText, 'error');
+                console.error('GitHub API Error:', errorText);
+                
+                if (response.status === 401) {
+                    this.showNotification('GitHub authentication failed. Check your token or use the manual method.', 'error');
+                } else if (response.status === 403) {
+                    this.showNotification('GitHub access forbidden. Repository may not exist or token may lack permissions.', 'error');
+                } else if (response.status === 404) {
+                    this.showNotification('Repository not found. Check owner and repository name.', 'error');
+                } else {
+                    this.showNotification('GitHub save failed: ' + response.status + ' - ' + response.statusText, 'error');
+                }
             }
         } catch (error) {
+            console.error('GitHub Save Error:', error);
             this.showNotification('GitHub save error: ' + error.message, 'error');
         }
+    }
+
+    // Manual GitHub Sync via Issue Form (No CORS issues)
+    manualGitHubSync() {
+        if (!this.currentDocId) {
+            this.showNotification('No document selected to sync', 'error');
+            return;
+        }
+
+        const doc = this.getDocumentById(this.currentDocId);
+        if (!doc) return;
+
+        const filename = doc.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        const title = `[KB-SAVE] ${filename}`;
+        
+        // Create a URL that pre-fills the new issue form
+        const issueUrl = `https://github.com/${this.githubConfig.owner}/${this.githubConfig.repo}/issues/new?` + 
+            `title=${encodeURIComponent(title)}&` +
+            `body=${encodeURIComponent(doc.content)}&` +
+            `labels=kb-save-doc,automated`;
+        
+        // Open in new tab - user manually submits
+        window.open(issueUrl, '_blank');
+        this.showNotification('Please submit the pre-filled issue form in the new tab', 'info');
     }
 
     // ===== SETTINGS MANAGEMENT =====
@@ -2982,13 +3044,27 @@ class KnowledgeBase {
     decodeFromAttribute(str) {
         return decodeURIComponent(atob(str));
     }
+
+    // Test method for GitHub issue creation
+    testGitHubIssueCreation() {
+        const testDoc = {
+            title: 'Test Document',
+            content: 'This is a test document content for GitHub issue creation.',
+            category: 'general'
+        };
+
+        this.commitToGitHub(
+            'test_document',
+            testDoc.content,
+            'Test: test_document'
+        );
+    }
 }
 
 // Initialize application
 document.addEventListener('DOMContentLoaded', () => {
     window.kb = new KnowledgeBase();
 });
-
     </script>
 </head>
 <body data-mode="home">

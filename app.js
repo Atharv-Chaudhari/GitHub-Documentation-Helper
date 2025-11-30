@@ -17,7 +17,7 @@ class KnowledgeBase {
         this.githubConfig = {
             token: '',
             owner: 'Atharv-Chaudhari',
-            repo: 'Artificial-Intelligence',
+            repo: 'GitHub-Documentation-Helper',
             branch: 'main',
             commitTemplate: 'Update documentation: {filename}',
             autoCommit: false,
@@ -1805,3 +1805,4 @@ class KnowledgeBase {
     document.addEventListener('DOMContentLoaded', () => {
         window.kb = new KnowledgeBase();
     });
+
